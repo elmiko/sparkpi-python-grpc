@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package sparkpi;
+
+service SparkPi {
+    // Get an estimation of Pi with a given scaling factor
+    rpc GetPi(Scale) returns (Pi) {}
+}
+
+// Scale represents the size of the random simulation that should be used
+// to estimate Pi, with larger numbers representing larger quantities of
+// random samplings.
+message Scale {
+    uint32 size = 1;
+}
+
+// Pi is the estimated value calculated by the server.
+message Pi {
+    double value = 1;
+}
