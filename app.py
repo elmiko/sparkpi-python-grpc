@@ -1,4 +1,5 @@
 from concurrent import futures
+import threading
 import time
 
 import grpc
@@ -26,9 +27,17 @@ def produce_pi(scale):
 
 
 class SparkPiServicer(sparkpi_pb2_grpc.SparkPiServicer):
+    def __init__(self, *args, **kwargs):
+        super(SparkPiServicer, self).__init__(*args, **kwargs)
+        self.lock = threading.Lock()
+
     def GetPi(self, request, context):
+        self.lock.acquire()
+        print('=========================== Begin Pi Estimation '
+              '===========================')
         print('Scale requested = {}'.format(request.size))
         pi = produce_pi(request.size)
+        self.lock.release()
         return sparkpi_pb2.Pi(value=pi)
 
 
