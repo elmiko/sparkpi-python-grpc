@@ -1,0 +1,20 @@
+#!/bin/env python3
+import argparse
+
+import grpc
+
+import sparkpi_pb2
+import sparkpi_pb2_grpc
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='get pi')
+    parser.add_argument('--host', required=True, help='the server host:port')
+    parser.add_argument('--scale', default='2',
+        help='scale factor to estimation service')
+    args = parser.parse_args()
+    channel = grpc.insecure_channel(args.host)
+    stub = sparkpi_pb2_grpc.SparkPiStub(channel)
+    scale = sparkpi_pb2.Scale(size=int(args.scale))
+    pi = stub.GetPi(scale)
+    print(pi.value)
